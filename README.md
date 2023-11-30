@@ -3,8 +3,8 @@ Method prototype for estimating admixture parameters using admixture fractions.
 
 # Installation
 
-For performance reasons, we use cython to speed up calculations. For this, you need a working toolchain for building C
-code (gcc and clang are known to work). Since you are going to build Python extensions, you will need python development headers (e.g. on ubuntu linux the package name is python-dev).
+For performance reasons, we use *cython* to speed up calculations. For this, you need a working toolchain for building C
+code (gcc and clang are known to work). Since you are going to build Python extensions, you will need python development headers (e.g. on ubuntu linux the package name is python-dev). Also our method uses *numpy* and *scipy* packages.
 
 To build the package use
 
