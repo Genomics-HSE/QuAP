@@ -1,5 +1,5 @@
 # *Qu*antifying *A*dxmiture *P*roportions 
-Method prototype for estimating admixture parameters using admixture fractions.
+Method for estimating admixture parameters of constant migration using admixture fractions and all data for the corresponding paper. 
 
 # Installation
 
