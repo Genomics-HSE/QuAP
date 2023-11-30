@@ -15,20 +15,16 @@ $ python setup.py build_ext -i
 
 
 ## Quick start
-To run this method k-statistics k2 and k3 of admixture proportions are required.
+To run this method k-statistics k1, k2 and k3 of admixture proportions for each chromosome of
+population that admixed only in founding generation are required.
 To estimate parameters simply run
 
 ```
-python run.py -s 0.2 -k2 0.0025 -k3 0.00035 -N 1000 -L 1
+python run.py --file data.txt
 ```
+
+You may test this script using `dummy_data.txt` file, that included in the repository. True parameters for this file are `Te=0` and `Td=10`.
 
 # Parameters
 `-N` specifies an effective population size.
-
-`-L` chromosome lengths. If several chromosomes are used put length for each one.
-
-`-k2` k2 statistics.
-
-`-k3` k3 statistics.
-
-`-s` total admixture proportion of the population that admixed (or k1 statistics)
+`-Te0` and `-Td0` sets initial point for the optimisation algorithm.

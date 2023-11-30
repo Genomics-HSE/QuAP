@@ -1,50 +1,63 @@
 #!/usr/bin/env python3
 
 import argparse
+import numpy as np
 
 from lamom.proportions import kMoment
 
 
 parser = argparse.ArgumentParser(description='...')
 
-#brackets
-parser.add_argument('--k2', '-k2', nargs=1, type=float, default=0,
-                    help='Obtained k2 statistics')
-parser.add_argument('--k3', '-k3', nargs=1, type=float, default=0,
-                    help='Obtained k3 statistics')
+# input
+parser.add_argument('--file', '-f', nargs=1, type=str, default='',
+                    help=
+'File with k1, k2 and k3 - statistics and chromosome lengths of the following format:\n\
+chr_length_1\tchr_length_2\t...\tchr_length_n\n\
+k1stat_1\tk1stat_2\t...\tk1stat_n\n\
+k2stat_1\tk2stat_2\t...\tk2stat_n\n\
+k3stat_1\tk3stat_2\t...\tk3stat_n\n')
 
-#parameters
-parser.add_argument('--T', '-T', nargs=1, type=float, default=None,
-                    help='Time to the admixture')
-parser.add_argument('--Td', '-d', nargs=1, type=float, default=None,
-                    help='The duration of admixture')
-parser.add_argument('--s', '-s', nargs=1, type=float, default=None,
-                    help='Total admixture proportion of the first ancestral population.')
-parser.add_argument('--N', '-N', nargs=1, type=float, default=1000,
-                    help='Effective population size, default is 1000')
+# parameters
+parser.add_argument('--Te0', '-Te0', nargs=1, type=float, default=5,
+                    help='Initial point of optimization algorithm for parameter: time end')
+parser.add_argument('--Td0', '-Td0', nargs=1, type=float, default=5,
+                    help='Initial point of optimization algorithm for parameter: duration')
+parser.add_argument('--N', '-N', nargs=1, type=float, default=10000,
+                    help='Effective population size, default is 10000')
 
-parser.add_argument('--lengths', '-L', default=[], nargs='+',
-                    help='Length of chromosome in M., for multiple chromosomes put several values (default: 1)')
 
 
 clargs = parser.parse_args()
 
-if isinstance(clargs.k2, list):
-    clargs.k2 = clargs.k2[0]
-if isinstance(clargs.k3, list):
-    clargs.k3 = clargs.k3[0]
-if isinstance(clargs.T, list):
-    clargs.T = clargs.T[0]
-if isinstance(clargs.Td, list):
-    clargs.Td = clargs.Td[0]
-if isinstance(clargs.s, list):
-    clargs.s = clargs.s[0]
+if isinstance(clargs.file, list):
+    clargs.file = clargs.file[0]
+if isinstance(clargs.Te0, list):
+    clargs.Te0 = clargs.Te0[0]
+if isinstance(clargs.Td0, list):
+    clargs.Td0 = clargs.Td0[0]
 if isinstance(clargs.N, list):
     clargs.N = clargs.N[0]
 
 
 print('Starting point estimate...')
 
-exp = kMoment(clargs.N, lengths=clargs.lengths)
-exp.set_k([clargs.k1], [clargs.k2], [clargs.k3], clargs.lengths)
-exp.estimate(x0=[5, 5], batchsize=0, silence=False)
+sample = np.loadtxt(clargs.file)
+
+lengths = sample[0]
+sample_k1 = sample[1]
+sample_k2 = sample[2]
+sample_k3 = sample[3]
+
+exp = kMoment(clargs.N)
+exp.sample(sample_k1, sample_k2, sample_k3, lengths)
+x = exp.estimate(x0=[clargs.Te0, clargs.Td0])
+
+s = exp.model.get_prop_per_gen(x.x[1])
+print(s, *x.x, end=' ')
+print(x.cost)
+
+estimate_k3 = exp.model.get_k3(s, *x.x)
+estimate_k2 = exp.model.get_k2(s, *x.x)
+
+print(*estimate_k2)
+print(*estimate_k3)
