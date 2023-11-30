@@ -1,4 +1,4 @@
-# inference-adxmiture-fraction
+# *Qu*antifying *A*dxmiture *P*roportions 
 Method prototype for estimating admixture parameters using admixture fractions.
 
 # Installation
